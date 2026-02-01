@@ -1,7 +1,12 @@
 import "./App.css";
+import Products from "./components/Products";
 
 function App() {
-  return <h1 class="text-3xl font-bold underline ">Hello Ecommerce!</h1>;
+  return (
+    <div>
+      <Products />
+    </div>
+  );
 }
 
 export default App;
