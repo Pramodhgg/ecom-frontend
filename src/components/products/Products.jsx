@@ -1,0 +1,55 @@
+import ProductCard from "./ProductCard";
+import { FaExclamationTriangle } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+
+import Loader from "../../ui/Loader";
+import Filter from "../../ui/Filter";
+import useProductFilter from "../../hooks/useProductFilter";
+import { useEffect } from "react";
+import { fetchCategories } from "../../store/actions";
+import Paginations from "../../ui/Paginations";
+
+const Products = () => {
+  const { isLoading, errorMessage } = useSelector((state) => state.error);
+  const { products, categories, pagination } = useSelector(
+    (state) => state.products,
+  );
+  console.log(categories);
+  const dispatch = useDispatch();
+  useProductFilter();
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  return (
+    <div className="lg:px-14 sm:px-8 px-4 py-14 2xl:w-[90%] 2xl:mx-auto">
+      <Filter categories={categories ? categories : []} />
+      {isLoading ? (
+        <Loader />
+      ) : errorMessage ? (
+        <div className="flex justify-center item-center h-50">
+          <FaExclamationTriangle className="text-slate-800 text-3xl mr-2" />
+          <span className="text-slate-800 text-lg font-medium">
+            {errorMessage}
+          </span>
+        </div>
+      ) : (
+        <div className="min-h-[700px]">
+          <div className="pb-6 pt-14 grid 2xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-y-6 gap-x-6">
+            {products.map((item, i) => {
+              return <ProductCard key={i} item={item} />;
+            })}
+          </div>
+          <div className="flex justify-center">
+            <Paginations
+              numOfpages={pagination?.totalPages}
+              totalProducts={pagination?.totalElements}
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+export default Products;

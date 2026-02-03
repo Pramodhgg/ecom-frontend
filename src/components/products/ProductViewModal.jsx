@@ -7,7 +7,7 @@ import {
 } from "@headlessui/react";
 import { Divider } from "@mui/material";
 import { useState } from "react";
-import Status from "./Status";
+import Status from "../shared/Status";
 import { MdClose, MdDone } from "react-icons/md";
 
 export default function ProductViewModal({
