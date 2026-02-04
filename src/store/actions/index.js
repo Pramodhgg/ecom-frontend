@@ -25,7 +25,7 @@ export const fetchProducts = (queryString) => async (dispatch) => {
 
 export const fetchCategories = () => async (dispatch) => {
   try {
-    // dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "CATEGORY_LOADER", payload: true });
 
     const { data } = await api.get(`/public/categories`);
     dispatch({
@@ -37,10 +37,10 @@ export const fetchCategories = () => async (dispatch) => {
       totalPages: data.totalPages,
       lastPage: data.lastPage,
     });
-    // dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "CATEGORY_SUCCESS", payload: true });
   } catch (e) {
     dispatch({
-      type: "SET_ERROR_MESSAGE",
+      type: "CATEGORY_ERROR_MESSAGE",
       payload: e?.response?.data?.message || "Something went wrong",
     });
   }

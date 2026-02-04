@@ -3,7 +3,7 @@ import { FaCartShopping } from "react-icons/fa6";
 import ProductViewModal from "./ProductViewModal";
 import truncateText from "../../utils/truncateText";
 
-const ProductCard = ({ item }) => {
+const ProductCard = ({ item, about = false }) => {
   const {
     productId,
     productName,
@@ -21,6 +21,7 @@ const ProductCard = ({ item }) => {
   const isAvailable = quantity && Number(quantity) > 0;
 
   const handleProductView = (product) => {
+    if (about) return;
     setSelectedViewProduct(product);
     setOpenProductViewModal(!openProductViewModal);
   };
@@ -53,33 +54,35 @@ const ProductCard = ({ item }) => {
             {truncateText(description, 80)}
           </p>
         </div>
-        <div className="flex justify-between">
-          {specialPrice ? (
-            <div className="flex flex-col">
-              <span className="text-gray-400 line-through">
-                ${Number(price).toFixed(2)}
-              </span>
-              <span className="text-lg font-bold text-slate-700">
-                ${Number(price).toFixed(2)}
-              </span>
-            </div>
-          ) : (
-            <div>
-              <span className="text-lg font-bold text-slate-700">
-                ${Number(price).toFixed(2)}
-              </span>
-            </div>
-          )}
-          <button
-            disabled={!isAvailable || btnLoader}
-            onClick={() => {}}
-            className={`bg-blue-500 ${isAvailable ? "opacity-100 hover:bg-blue-600:opacity-90 cursor-pointer" : "opacity-50 cursor-not-allowed"}
+        {!about && (
+          <div className="flex justify-between">
+            {specialPrice ? (
+              <div className="flex flex-col">
+                <span className="text-gray-400 line-through">
+                  ${Number(price).toFixed(2)}
+                </span>
+                <span className="text-lg font-bold text-slate-700">
+                  ${Number(price).toFixed(2)}
+                </span>
+              </div>
+            ) : (
+              <div>
+                <span className="text-lg font-bold text-slate-700">
+                  ${Number(price).toFixed(2)}
+                </span>
+              </div>
+            )}
+            <button
+              disabled={!isAvailable || btnLoader}
+              onClick={() => {}}
+              className={`bg-blue-500 ${isAvailable ? "opacity-100 hover:bg-blue-600:opacity-90 cursor-pointer" : "opacity-50 cursor-not-allowed"}
              text-white py-2 px-4 rounded-lg transition-opacity duration-300 w-36 flex items-center justify-center`}
-          >
-            <FaCartShopping className="mr-2" />
-            {isAvailable ? "Add to cart" : "Out of stock"}
-          </button>
-        </div>
+            >
+              <FaCartShopping className="mr-2" />
+              {isAvailable ? "Add to cart" : "Out of stock"}
+            </button>
+          </div>
+        )}
       </div>
       <ProductViewModal
         open={openProductViewModal}
