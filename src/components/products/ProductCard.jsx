@@ -2,10 +2,12 @@ import { useState } from "react";
 import { FaCartShopping } from "react-icons/fa6";
 import ProductViewModal from "./ProductViewModal";
 import truncateText from "../../utils/truncateText";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../store/actions";
 
 const ProductCard = ({ item, about = false }) => {
   const {
-    productId,
+    productID,
     productName,
     image,
     description,
@@ -14,7 +16,7 @@ const ProductCard = ({ item, about = false }) => {
     discount,
     specialPrice,
   } = item;
-
+  const dispatch = useDispatch();
   const [openProductViewModal, setOpenProductViewModal] = useState(false);
   const btnLoader = false;
   const [selectedViewProduct, setSelectedViewProduct] = useState({});
@@ -24,6 +26,10 @@ const ProductCard = ({ item, about = false }) => {
     if (about) return;
     setSelectedViewProduct(product);
     setOpenProductViewModal(!openProductViewModal);
+  };
+
+  const addtocarthandler = (cartItems) => {
+    dispatch(addToCart(cartItems));
   };
 
   return (
@@ -74,9 +80,9 @@ const ProductCard = ({ item, about = false }) => {
             )}
             <button
               disabled={!isAvailable || btnLoader}
-              onClick={() => {}}
               className={`bg-blue-500 ${isAvailable ? "opacity-100 hover:bg-blue-600:opacity-90 cursor-pointer" : "opacity-50 cursor-not-allowed"}
              text-white py-2 px-4 rounded-lg transition-opacity duration-300 w-36 flex items-center justify-center`}
+              onClick={() => addtocarthandler(item)}
             >
               <FaCartShopping className="mr-2" />
               {isAvailable ? "Add to cart" : "Out of stock"}
