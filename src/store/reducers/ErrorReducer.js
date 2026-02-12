@@ -10,6 +10,13 @@ export const ErrorReducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, isLoading: action.payload };
+    case "BUTTON_LOADER":
+      return {
+        ...state,
+        btnLoader: true,
+        errorMessage: null,
+        categoryError: null,
+      };
     case "SET_SUCCESS":
       return {
         ...state,

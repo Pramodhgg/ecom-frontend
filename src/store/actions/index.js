@@ -114,3 +114,100 @@ export const removeFromCart = (data, toast) => (dispatch, getState) => {
   toast.success(`${data.productName} removed from cart`);
   localStorage.setItem("cartItems", JSON.stringify(getState().carts.cart));
 };
+
+export const registerNewUser =
+  (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
+    try {
+      setLoader(true);
+      const { data } = await api.post("/auth/signup", sendData);
+      reset();
+      toast.success(data?.message || "User Registered Successfully");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.error(
+        error?.response?.data?.message ||
+          error?.response?.data?.password ||
+          "Internal Server Error",
+      );
+    } finally {
+      setLoader(false);
+    }
+  };
+
+export const authenticateSignInUser =
+  (sendData, toast, reset, navigate, setLoader) => async (dispatch) => {
+    try {
+      setLoader(true);
+      const { data } = await api.post("/auth/signin", sendData);
+      dispatch({ type: "LOGIN_USER", payload: data });
+      localStorage.setItem("auth", JSON.stringify(data));
+      reset();
+      toast.success("Login Success");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Internal Server Error");
+    } finally {
+      setLoader(false);
+    }
+  };
+
+export const logOutUser = (navigate) => (dispatch) => {
+  dispatch({ type: "LOG_OUT" });
+  localStorage.removeItem("auth");
+  navigate("/login");
+};
+
+export const getUserAddresses = () => async (dispatch, getState) => {
+  try {
+    dispatch({ type: "SET_LOADING", payload: true });
+    const { data } = await api.get(`/addresses`);
+    dispatch({ type: "USER_ADDRESS", payload: data });
+    dispatch({ type: "SET_SUCCESS" });
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Internal Server Error");
+    dispatch({
+      type: "IS_ERROR",
+      payload:
+        error?.response?.data?.message || "Failed to fetch user addresses",
+    });
+  }
+};
+
+export const addUpdateUserAddress =
+  (sendData, toast, addressId, setOpenAddressModal) =>
+  async (dispatch, getState) => {
+    /*
+    const { user } = getState().auth;
+    await api.post(`/addresses`, sendData, {
+          headers: { Authorization: "Bearer " + user.jwtToken },
+        });
+    */
+    dispatch({ type: "BUTTON_LOADER" });
+    try {
+      if (!addressId) {
+        const { data } = await api.post("/addresses", sendData);
+      } else {
+        await api.put(`/addresses/${addressId}`, sendData);
+      }
+      dispatch(getUserAddresses());
+      toast.success("Address saved successfully");
+      dispatch({ type: "SET_SUCCESS" });
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Internal Server Error");
+      dispatch({ type: "IS_ERROR", payload: null });
+    } finally {
+      setOpenAddressModal(false);
+    }
+  };
+
+export const selectUserCheckoutAddress = (address) => {
+  localStorage.setItem("CHECKOUT_ADDRESS", JSON.stringify(address));
+
+  return {
+    type: "SELECT_CHECKOUT_ADDRESS",
+    payload: address,
+  };
+};
